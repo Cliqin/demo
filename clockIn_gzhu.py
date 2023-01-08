@@ -215,9 +215,9 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
                 sys.exit()
 
         if self.fail:
-            title = content = "健康打卡失败"
+            title = content = "第二次打卡失败"
         else:
-            title = content = "健康打卡成功"
+            title = content = "第二次打卡成功"
 
         logger.info(f"推送{title}的消息")
         data = {"token": self.pushplus, "title": title, "content": content}
