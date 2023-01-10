@@ -41,9 +41,9 @@ class ClockIn:
             "excludeSwitches", ["ignore-certificate-errors", "enable-automation"]
         )
 
-        self.path = 'chromedriver.exe'
-        # self.driver = selenium.webdriver.Chrome(options=options)
-        self.driver = selenium.webdriver.Chrome()
+        
+        self.driver = selenium.webdriver.Chrome(options=options)
+        
 
         self.wdwait = WebDriverWait(self.driver, 30)
         self.titlewait = WebDriverWait(self.driver, 5)
