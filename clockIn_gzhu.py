@@ -201,26 +201,32 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
         message = self.driver.execute_script(
             "return document.getElementsByClassName('dialog_content')[0]['textContent']"
         )
+
         logger.info(message)
-        # if 'reviews' or '备注' in message:
-        #     self.wdwait.until(
-        #         EC.element_to_be_clickable(
-        #             (By.XPATH, "//button[@class='dialog_button default fr']")
-        #         )
-        #     ).click()
-        #     time.sleep(2)
-        #     self.wdwait.until(
-        #         EC.visibility_of_element_located(
-        #             (By.XPATH, "//div[@class='dialog_content']")
-        #         )
-        #     )
-        #     message = self.driver.execute_script(
-        #         "return document.getElementsByClassName('dialog_content')[0]['textContent']"
-        #     )
+        if message == "Done successfully!" or message == "办理成功!":
+            logger.info("健康打卡成功--return")
+            return
+
+        if 'reviews' in message or '备注' in message:
+            logger.info('要写备注')
+            self.wdwait.until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[@class='dialog_button default fr']")
+                )
+            ).click()
+            time.sleep(2)
+            self.wdwait.until(
+                EC.visibility_of_element_located(
+                    (By.XPATH, "//div[@class='dialog_content']")
+                )
+            )
+            message = self.driver.execute_script(
+                "return document.getElementsByClassName('dialog_content')[0]['textContent']"
+            )
 
         logger.info(message)
 
-        if message == "Done successfully!" or "办理成功!":
+        if message == "Done successfully!" or message == "办理成功!":
             logger.info("健康打卡成功")
         else:
             logger.error(f"弹出框消息不正确，为:{message}")
