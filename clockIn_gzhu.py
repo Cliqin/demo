@@ -41,9 +41,9 @@ class ClockIn:
             "excludeSwitches", ["ignore-certificate-errors", "enable-automation"]
         )
 
-        # self.path  = 'chromedriver.exe'
-        self.driver = selenium.webdriver.Chrome(options=options)
-        # self.driver = selenium.webdriver.Chrome()
+        self.path = 'chromedriver.exe'
+        # self.driver = selenium.webdriver.Chrome(options=options)
+        self.driver = selenium.webdriver.Chrome()
 
         self.wdwait = WebDriverWait(self.driver, 30)
         self.titlewait = WebDriverWait(self.driver, 5)
@@ -61,8 +61,7 @@ class ClockIn:
                 logger.info(f"第{retries}次运行")
                 if retries != 1:
                     self.refresh()
-                if self.page == 4:
-                    self.step_add_temp_page_4()
+
                 if self.page == 0:
                     self.step0()
                 if self.page <= 1:
@@ -71,6 +70,8 @@ class ClockIn:
                     self.step2()
                 if self.page <= 3:
                     self.step3()
+                if self.page <= 4:
+                    self.step4()
 
                 break
             except selenium.common.exceptions.TimeoutException:
@@ -114,9 +115,9 @@ class ClockIn:
                     self.page = 1
                 case "融合门户":
                     self.page = 2
-                case "Loading..." | "表单填写与审批::加载中" | "填报健康信息 - 学生健康状况申报":
-                    self.page = 3
                 case "学生健康状况申报":
+                    self.page = 3
+                case "Loading..." | "表单填写与审批::加载中" | "填报健康信息 - 学生健康状况申报":
                     self.page = 4
                 case "":
                     logger.info("当前页面标题为空")
@@ -158,7 +159,7 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
     def step2(self) -> None:
         """跳转到填报健康信息 - 学生健康状况申报页面"""
         self.titlewait.until(EC.title_contains("融合门户"))
-        logger.info("正在跳转到填报健康信息 - 学生健康状况申报页面")
+        logger.info("正在跳转到-学生健康状况申报-页面")
         # self.driver.get("https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start")
         #   //*[@id="preview_start_button"]
         self.driver.get("https://yqtb.gzhu.edu.cn/infoplus/form/XSJKZKSB/start?preview=true")
@@ -167,10 +168,13 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
                 (By.XPATH, "//*[@id='preview_start_button']")
             )
         )
-        self.driver.find_element(By.XPATH,'//*[@id="preview_start_button"]').click()
+        self.driver.find_element(By.XPATH, '//*[@id="preview_start_button"]').click()
 
-    def step_add_temp_page_4(self) -> None:
+    def step3(self) -> None:
+        logger.info("重新刷新-学生健康状况申报页面-页面")
+
         self.driver.get("https://yqtb.gzhu.edu.cn/infoplus/form/XSJKZKSB/start?preview=true")
+
         self.titlewait.until(EC.title_contains("学生健康状况申报"))
         self.wdwait.until(
             EC.element_to_be_clickable(
@@ -179,8 +183,9 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
         )
         self.driver.find_element(By.XPATH, '//*[@id="preview_start_button"]').click()
 
-    def step3(self) -> None:
+    def step4(self) -> None:
         """填写并提交表单"""
+        logger.info("正在填写并提交表单")
         self.wdwait.until(
             EC.element_to_be_clickable(
                 (By.XPATH, "//*[@id='V1_CTRL51']")
