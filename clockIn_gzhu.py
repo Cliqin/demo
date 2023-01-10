@@ -173,8 +173,6 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
     def step3(self) -> None:
         logger.info("重新刷新-学生健康状况申报页面-页面")
 
-        self.driver.get("https://yqtb.gzhu.edu.cn/infoplus/form/XSJKZKSB/start?preview=true")
-
         self.titlewait.until(EC.title_contains("学生健康状况申报"))
         self.wdwait.until(
             EC.element_to_be_clickable(
@@ -205,27 +203,12 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
             )
         ).click()
 
-        #
-        # form_error_content_list = self.driver.find_elements(
-        #     By.XPATH, "//div[@class='line10']"
-        # )
-        # for form_error_content in form_error_content_list:
-        #     button = self.driver.find_elements(
-        #         locate_with(By.XPATH, "//input[@type='radio']").below(
-        #             form_error_content
-        #         )
-        #     )[0]
-        #     self.driver.execute_script("$(arguments[0]).click();", button)
-        #
-        # logger.info("提交表单")
-        # self.driver.find_element(By.XPATH, "//nobr[contains(text(), '提交')]/..").click()
-        #
         self.wdwait.until(
             EC.visibility_of_element_located(
                 (By.XPATH, "//div[@class='dialog_content']")
             )
         )
-        time.sleep(10)
+        time.sleep(2)
         # //*[@id="dialog_container_843202"]/div[2]/button[1]
         # dialog_content
         # message = self.driver.execute_script(
