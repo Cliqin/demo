@@ -190,11 +190,11 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
         ]:
             self.driver.find_element(By.XPATH, xpath).click()
 
-        self.wdwait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//button[@class='dialog_button default fr']")
-            )
-        ).click()
+        # self.wdwait.until(
+        #     EC.element_to_be_clickable(
+        #         (By.XPATH, "//button[@class='dialog_button default fr']")
+        #     )
+        # ).click()
 
         self.wdwait.until(
             EC.visibility_of_element_located(
