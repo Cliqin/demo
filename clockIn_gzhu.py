@@ -163,16 +163,9 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
         # self.driver.get("https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start")
         #   //*[@id="preview_start_button"]
         self.driver.get("https://yqtb.gzhu.edu.cn/infoplus/form/XSJKZKSB/start?preview=true")
-        self.wdwait.until(
-            EC.element_to_be_clickable(
-                (By.XPATH, "//*[@id='preview_start_button']")
-            )
-        )
-        self.driver.find_element(By.XPATH, '//*[@id="preview_start_button"]').click()
 
     def step3(self) -> None:
-        logger.info("重新刷新-学生健康状况申报页面-页面")
-
+        logger.info("进入-学生健康状况申报页面-页面")
         self.titlewait.until(EC.title_contains("学生健康状况申报"))
         self.wdwait.until(
             EC.element_to_be_clickable(
