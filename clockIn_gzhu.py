@@ -40,7 +40,10 @@ class ClockIn:
             "excludeSwitches", ["ignore-certificate-errors", "enable-automation"]
         )
 
+        # self.path  = 'chromedriver.exe'
         self.driver = selenium.webdriver.Chrome(options=options)
+        # self.driver = selenium.webdriver.Chrome()
+
         self.wdwait = WebDriverWait(self.driver, 30)
         self.titlewait = WebDriverWait(self.driver, 5)
 
@@ -57,7 +60,8 @@ class ClockIn:
                 logger.info(f"第{retries}次运行")
                 if retries != 1:
                     self.refresh()
-
+                if self.page == 4:
+                    self.step_add_temp_page_4()
                 if self.page == 0:
                     self.step0()
                 if self.page <= 1:
@@ -111,6 +115,8 @@ class ClockIn:
                     self.page = 2
                 case "Loading..." | "表单填写与审批::加载中" | "填报健康信息 - 学生健康状况申报":
                     self.page = 3
+                case "学生健康状况申报":
+                    self.page = 4
                 case "":
                     logger.info("当前页面标题为空")
                     refresh_times += 1
@@ -152,19 +158,37 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
         """跳转到填报健康信息 - 学生健康状况申报页面"""
         self.titlewait.until(EC.title_contains("融合门户"))
         logger.info("正在跳转到填报健康信息 - 学生健康状况申报页面")
-        self.driver.get("https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start")
+        # self.driver.get("https://yqtb.gzhu.edu.cn/infoplus/form/XNYQSB/start")
+        #   //*[@id="preview_start_button"]
+        self.driver.get("https://yqtb.gzhu.edu.cn/infoplus/form/XSJKZKSB/start?preview=true")
+        self.wdwait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//*[@id='preview_start_button']")
+            )
+        )
+        self.driver.find_element(By.XPATH,'//*[@id="preview_start_button"]').click()
+
+    def step_add_temp_page_4(self) -> None:
+        self.driver.get("https://yqtb.gzhu.edu.cn/infoplus/form/XSJKZKSB/start?preview=true")
+        self.titlewait.until(EC.title_contains("学生健康状况申报"))
+        self.wdwait.until(
+            EC.element_to_be_clickable(
+                (By.XPATH, "//*[@id='preview_start_button']")
+            )
+        )
+        self.driver.find_element(By.XPATH, '//*[@id="preview_start_button"]').click()
 
     def step3(self) -> None:
         """填写并提交表单"""
         self.wdwait.until(
             EC.element_to_be_clickable(
-                (By.XPATH, "//div[@align='right']/input[@type='checkbox']")
+                (By.XPATH, "//*[@id='V1_CTRL51']")
             )
         )
 
         logger.info("开始填表")
         for xpath in [
-            "//div[@align='right']/input[@type='checkbox']",
+            "//*[@id='V1_CTRL51']",
             "//nobr[contains(text(), '提交')]/..",
         ]:
             self.driver.find_element(By.XPATH, xpath).click()
@@ -175,31 +199,40 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
             )
         ).click()
 
-        form_error_content_list = self.driver.find_elements(
-            By.XPATH, "//div[@class='line10']"
-        )
-        for form_error_content in form_error_content_list:
-            button = self.driver.find_elements(
-                locate_with(By.XPATH, "//input[@type='radio']").below(
-                    form_error_content
-                )
-            )[0]
-            self.driver.execute_script("$(arguments[0]).click();", button)
-
-        logger.info("提交表单")
-        self.driver.find_element(By.XPATH, "//nobr[contains(text(), '提交')]/..").click()
-
+        #
+        # form_error_content_list = self.driver.find_elements(
+        #     By.XPATH, "//div[@class='line10']"
+        # )
+        # for form_error_content in form_error_content_list:
+        #     button = self.driver.find_elements(
+        #         locate_with(By.XPATH, "//input[@type='radio']").below(
+        #             form_error_content
+        #         )
+        #     )[0]
+        #     self.driver.execute_script("$(arguments[0]).click();", button)
+        #
+        # logger.info("提交表单")
+        # self.driver.find_element(By.XPATH, "//nobr[contains(text(), '提交')]/..").click()
+        #
         self.wdwait.until(
             EC.visibility_of_element_located(
-                (By.XPATH, "//div[@class='form_do_action_error']")
+                (By.XPATH, "//div[@class='dialog_content']")
             )
         )
+        time.sleep(10)
+        # //*[@id="dialog_container_843202"]/div[2]/button[1]
+        # dialog_content
+        # message = self.driver.execute_script(
+        #     "return document.getElementsByClassName('form_do_action_error')[0]['textContent']"
+        # )
 
         message = self.driver.execute_script(
-            "return document.getElementsByClassName('form_do_action_error')[0]['textContent']"
+            "return document.getElementsByClassName('dialog_content')[0]['textContent']"
         )
 
-        if message == "打卡成功":
+        print(message)
+
+        if message == "办理成功!":
             logger.info("健康打卡成功")
         else:
             logger.error(f"弹出框消息不正确，为:{message}")
@@ -215,9 +248,9 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
                 sys.exit()
 
         if self.fail:
-            title = content = "健康打卡失败"
+            title = content = "八点打卡失败"
         else:
-            title = content = "健康打卡成功"
+            title = content = "八点打卡成功"
 
         logger.info(f"推送{title}的消息")
         data = {"token": self.pushplus, "title": title, "content": content}
