@@ -166,6 +166,7 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
 
     def step3(self) -> None:
         logger.info("进入-学生健康状况申报页面-页面")
+        
         self.titlewait.until(EC.title_contains("学生健康状况申报"))
         self.wdwait.until(
             EC.element_to_be_clickable(
@@ -212,7 +213,7 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
             "return document.getElementsByClassName('dialog_content')[0]['textContent']"
         )
 
-        print(message)
+        logger.info(message)
 
         if message == "办理成功!":
             logger.info("健康打卡成功")
