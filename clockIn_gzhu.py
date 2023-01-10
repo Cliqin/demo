@@ -191,29 +191,33 @@ login?service=https%3A%2F%2Fnewmy.gzhu.edu.cn%2Fup%2Fview%3Fm%3Dup"
         ]:
             self.driver.find_element(By.XPATH, xpath).click()
 
-        # self.wdwait.until(
-        #     EC.element_to_be_clickable(
-        #         (By.XPATH, "//button[@class='dialog_button default fr']")
-        #     )
-        # ).click()
-
+        # reviews
         self.wdwait.until(
             EC.visibility_of_element_located(
                 (By.XPATH, "//div[@class='dialog_content']")
             )
         )
-        time.sleep(2)
-        # //*[@id="dialog_container_843202"]/div[2]/button[1]
-        # dialog_content
-        # message = self.driver.execute_script(
-        #     "return document.getElementsByClassName('form_do_action_error')[0]['textContent']"
-        # )
-
         message = self.driver.execute_script(
             "return document.getElementsByClassName('dialog_content')[0]['textContent']"
         )
+        print(message)
+        if 'reviews' in message:
+            self.wdwait.until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[@class='dialog_button default fr']")
+                )
+            ).click()
+            self.wdwait.until(
+                EC.visibility_of_element_located(
+                    (By.XPATH, "//div[@class='dialog_content']")
+                )
+            )
+            time.sleep(2)
+            message = self.driver.execute_script(
+                "return document.getElementsByClassName('dialog_content')[0]['textContent']"
+            )
 
-        logger.info(message)
+        print(message)
 
         if message == "办理成功!":
             logger.info("健康打卡成功")
